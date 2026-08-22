@@ -15,6 +15,8 @@ Also made the button Toggle discoverability depending on it's current state (sea
 
 Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
 
+Per-Device Settings (Auto-Spin & Auto-Catch) so all 4 devices can have their own combination of settings they desire
+
 All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'm awaiting my ESP32-WROOM to arrive in the mail to flash and confirm the changes I'm making work)
 
 All this code is implemented and the code seems sound and SHOULD work! but theoretical till have the hardware to test/trial run
