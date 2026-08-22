@@ -20,7 +20,6 @@ All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'
 All this code is implemented and the code seems sound and SHOULD work! but theoretical till have the hardware to test/trial run
 
 
----
 
 **ORIGINAL GIT**:
 
