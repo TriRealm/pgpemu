@@ -7,6 +7,21 @@ You need to dump these secrets yourself from your own original device (see [Refe
 
 ## Features
 
+**TriRealm (22/08/2026)**
+
+Working on adding more functionality, making a long button press boot up a web server to change settings on the go easily on mobile which will shut itself down once settings have been saved
+
+Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached)
+
+Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
+
+All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'm awaiting my ESP32-WROOM to arrive in the mail to flash and confirm the changes I'm making work)
+
+All this code is implemented and the code seems sound and SHOULD work! but theoretical till have the hardware to test/trial run
+---
+
+**ORIGINAL GIT**:
+
 This fork adds some features:
 
 - connect up to 4 different devices simultaneously
