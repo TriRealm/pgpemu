@@ -23,6 +23,10 @@ All this code is implemented and the code seems sound and SHOULD work! but theor
 
 [LINK FOR MY OWN REFERENCE - THIS IS THE BLOG POST I DISCOVERED THIS PROJECT FROM](https://spezifisch.codeberg.page/posts/2023-04-03/pokemon-go-plus-autocatcher-diy/)
 
+Maybe for Future revisions?
+
+[MP2759 Battery Management/Charger Chip](https://www.monolithicpower.com/en/products/battery-management/chargers/mp2759.html) - Would allow for battery to be connected to the unit directly and if the battery died, could plug in and charge WITHOUT having to disconnect the battery and STILL actively use the PGPEmu Safely (Chip has `Power Path Management`
+
 **ORIGINAL GIT**:
 
 This fork adds some features:
