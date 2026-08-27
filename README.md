@@ -13,11 +13,11 @@ Working on adding more functionality:
 
 - [x] Making a long button press boot up a web server to change settings on the go easily on mobile which will shut itself down once settings have been saved
 
-- [x] Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached)
+- [x] Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached) - Will also turn off Advertising mode with every new connection       automatically
 
 - [x] Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
 
-- [x] LED Brightness (WOW They're Bright LMAO)
+- [x] LED Brightness Settings on Web Server (WOW They're Bright LMAO)
 
 - [x] Per-Device Settings (Auto-Spin & Auto-Catch) so all 4 devices can have their own combination of settings they desire
 
