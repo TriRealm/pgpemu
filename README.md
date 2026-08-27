@@ -9,13 +9,15 @@ You need to dump these secrets yourself from your own original device (see [Refe
 
 **TriRealm (22/08/2026)**
 
-Working on adding more functionality, making a long button press boot up a web server to change settings on the go easily on mobile which will shut itself down once settings have been saved
+Working on adding more functionality:
 
-Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached)
+- [x] Making a long button press boot up a web server to change settings on the go easily on mobile which will shut itself down once settings have been saved
 
-Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
+- [x] Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached)
 
-Per-Device Settings (Auto-Spin & Auto-Catch) so all 4 devices can have their own combination of settings they desire
+- [ ] Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
+
+- [x] Per-Device Settings (Auto-Spin & Auto-Catch) so all 4 devices can have their own combination of settings they desire
 
 All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'm awaiting my ESP32-WROOM to arrive in the mail to flash and confirm the changes I'm making work)
 
