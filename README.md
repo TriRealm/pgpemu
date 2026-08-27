@@ -15,7 +15,9 @@ Working on adding more functionality:
 
 - [x] Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached)
 
-- [ ] Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
+- [x] Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
+
+- [x] LED Brightness (WOW They're Bright LMAO)
 
 - [x] Per-Device Settings (Auto-Spin & Auto-Catch) so all 4 devices can have their own combination of settings they desire
 
