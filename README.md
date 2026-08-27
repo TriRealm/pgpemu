@@ -25,7 +25,8 @@ All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'
 
 All this code is implemented and the code seems sound and SHOULD work! but theoretical till have the hardware to test/trial run
 
---
+---
+
 **TriRealm (28/08/2026)**
 
 Working Prototype On Scrap PCB's I had laying around, all features and changes function perfectly!
@@ -39,7 +40,8 @@ Now I'm just waiting on my Custom PCB's designed to house these components witho
 Maybe for Future revisions?
 
 [MP2759 Battery Management/Charger Chip](https://www.monolithicpower.com/en/products/battery-management/chargers/mp2759.html) - Would allow for battery to be connected to the unit directly and if the battery died, could plug in and charge WITHOUT having to disconnect the battery and STILL actively use the PGPEmu Safely (Chip has `Power Path Management`)
---
+
+---
 **ORIGINAL GIT**:
 
 This fork adds some features:
