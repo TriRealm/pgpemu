@@ -33,8 +33,6 @@ Working Prototype On Scrap PCB's I had laying around, all features and changes f
 
 ![Very First Working Prototype with changes to code above.](https://i.postimg.cc/yx9S4gPK/image.png)
 
-[LINK FOR MY OWN REFERENCE - THIS IS THE BLOG POST I DISCOVERED THIS PROJECT FROM](https://spezifisch.codeberg.page/posts/2023-04-03/pokemon-go-plus-autocatcher-diy/)
-
 Now I'm just waiting on my Custom PCB's designed to house these components without any visible wires and make it a nice clean package!
 
 Maybe for Future revisions?
@@ -43,6 +41,8 @@ Maybe for Future revisions?
 
 ---
 **ORIGINAL GIT**:
+
+[LINK FOR MY OWN REFERENCE (TriRealm) - THIS IS THE BLOG POST I DISCOVERED THIS PROJECT FROM](https://spezifisch.codeberg.page/posts/2023-04-03/pokemon-go-plus-autocatcher-diy/)
 
 This fork adds some features:
 
