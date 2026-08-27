@@ -25,6 +25,8 @@ All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'
 
 All this code is implemented and the code seems sound and SHOULD work! but theoretical till have the hardware to test/trial run
 
+![Very First Working Prototype with changes to code above.](https://i.postimg.cc/yx9S4gPK/image.png)
+
 [LINK FOR MY OWN REFERENCE - THIS IS THE BLOG POST I DISCOVERED THIS PROJECT FROM](https://spezifisch.codeberg.page/posts/2023-04-03/pokemon-go-plus-autocatcher-diy/)
 
 Maybe for Future revisions?
