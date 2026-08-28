@@ -39,6 +39,8 @@ Maybe for Future revisions?
 
 [MP2759 Battery Management/Charger Chip](https://www.monolithicpower.com/en/products/battery-management/chargers/mp2759.html) - Would allow for battery to be connected to the unit directly and if the battery died, could plug in and charge WITHOUT having to disconnect the battery and STILL actively use the PGPEmu Safely (Chip has `Power Path Management`)
 
+[FCC No. of ESP32 Devboard](https://fccid.io/2A54N-ESP32)
+
 ---
 **ORIGINAL GIT**:
 
