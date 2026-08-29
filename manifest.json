@@ -1,6 +1,6 @@
 {
   "name": "PGP Emulator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "home_assistant_domain": "esphome",
   "funding_url": "",
   "new_install_prompt_erase": true,
