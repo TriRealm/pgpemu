@@ -1,0 +1,61 @@
+name: Build and Publish Firmware
+
+# Triggers: push a tag like "v1.0.0" to build and publish a new release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch: {}  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build firmware with ESP-IDF
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: release-v6.1   # stable release matching the v6.1-rc1
+          target: esp32
+          path: 'pgpemu-esp32'            # path to the folder containing CMakeLists.txt
+
+      - name: Collect binaries
+        run: |
+          mkdir -p artifacts
+          cp pgpemu-esp32/build/bootloader/bootloader.bin artifacts/
+          cp pgpemu-esp32/build/partition_table/partition-table.bin artifacts/
+          cp pgpemu-esp32/build/pgpemu.bin artifacts/
+          cp pgpemu-esp32/build/flasher_args.json artifacts/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-bin
+          path: artifacts/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: firmware-bin
+          path: gh-pages/firmware
+
+      - name: Commit and push updated firmware
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add firmware
+          git commit -m "Update firmware build from ${{ github.ref_name }}" || echo "No changes to commit"
+          git push
