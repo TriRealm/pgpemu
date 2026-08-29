@@ -44,7 +44,7 @@ void init_uart()
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
         .rx_flow_ctrl_thresh = 0,
-        .use_ref_tick = 0};
+    };
 
     uart_param_config(EX_UART_NUM, &uart_config);
 
@@ -91,23 +91,35 @@ static void uart_event_task(void *pvParameters)
                     dump_client_states();
                 }
                 else if (dtmp[0] == 's')
-                {
-                    // toggle autospin
-                    if (!toggle_setting(&settings.autospin))
-                    {
-                        ESP_LOGE(UART_TAG, "failed!");
-                    }
-                    ESP_LOGI(UART_TAG, "autospin %s", get_setting(&settings.autospin) ? "on" : "off");
-                }
-                else if (dtmp[0] == 'c')
-                {
-                    // toggle autocatch
-                    if (!toggle_setting(&settings.autocatch))
-                    {
-                        ESP_LOGE(UART_TAG, "failed!");
-                    }
-                    ESP_LOGI(UART_TAG, "autocatch %s", get_setting(&settings.autocatch) ? "on" : "off");
-                }
+{
+    // toggle autospin for all devices
+    bool new_state = !get_device_autospin(0);
+    bool ok = true;
+    for (uint8_t i = 0; i < MAX_PGP_DEVICES; i++)
+    {
+        ok &= set_device_autospin(i, new_state);
+    }
+    if (!ok)
+    {
+        ESP_LOGE(UART_TAG, "failed!");
+    }
+    ESP_LOGI(UART_TAG, "autospin %s", new_state ? "on" : "off");
+}
+else if (dtmp[0] == 'c')
+{
+    // toggle autocatch for all devices
+    bool new_state = !get_device_autocatch(0);
+    bool ok = true;
+    for (uint8_t i = 0; i < MAX_PGP_DEVICES; i++)
+    {
+        ok &= set_device_autocatch(i, new_state);
+    }
+    if (!ok)
+    {
+        ESP_LOGE(UART_TAG, "failed!");
+    }
+    ESP_LOGI(UART_TAG, "autocatch %s", new_state ? "on" : "off");
+}
                 else if (dtmp[0] == 'p')
                 {
                     // toggle ping

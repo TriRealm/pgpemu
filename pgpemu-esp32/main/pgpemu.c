@@ -15,9 +15,65 @@
 #include "settings.h"
 #include "stats.h"
 #include "uart.h"
+#include "wifi_config.h"
+#include "wifi.h"
+#include "driver/gpio.h"
 
-void app_main()
+
+    void app_main()
 {
+
+    // RECOVERY MODE CHECK
+    //
+    // If pin 14 is held LOW for ~3s at boot, force Wi-Fi
+    // configuration mode regardless of the use_button setting.
+    // This guarantees a recovery path even if the button
+    // was disabled in settings or was never enabled.
+    //
+
+    {
+        gpio_config_t recovery_io_conf = {};
+        recovery_io_conf.intr_type = GPIO_INTR_DISABLE;
+        recovery_io_conf.pin_bit_mask = (1ULL << GPIO_NUM_14);
+        recovery_io_conf.mode = GPIO_MODE_INPUT;
+        recovery_io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
+        recovery_io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+        gpio_config(&recovery_io_conf);
+
+        if (gpio_get_level(GPIO_NUM_14) == 0)
+        {
+            vTaskDelay(pdMS_TO_TICKS(3000));
+
+            if (gpio_get_level(GPIO_NUM_14) == 0)
+            {
+                ESP_LOGW(PGPEMU_TAG, "recovery: pin held at boot, forcing Wi-Fi config mode");
+
+                init_config_storage();
+
+                if (!init_wifi())
+                {
+                    ESP_LOGE(PGPEMU_TAG, "Wi-Fi initialization failed");
+                }
+
+                init_settings();
+                read_stored_settings(false);
+                settings_ready();
+
+                if (!wifi_config_start())
+                {
+                    ESP_LOGE(PGPEMU_TAG, "failed to force-start Wi-Fi config mode");
+                }
+
+                while (wifi_config_is_active())
+                {
+                    vTaskDelay(pdMS_TO_TICKS(1000));
+                }
+
+                esp_restart();
+            }
+        }
+    }
+    
     // uart menu. put it first because it purges all logs
     init_uart();
 
@@ -36,10 +92,21 @@ void app_main()
     // init nvs storage
     init_config_storage();
 
+    if (!init_wifi())
+{
+    ESP_LOGE(
+        PGPEMU_TAG,
+        "Wi-Fi initialization failed"
+    );
+}
+
     // init settings mutex
     init_settings();
     // restore saved settings from nvs
     read_stored_settings(false);
+
+    // initilise Wi-Fi
+    //init_wifi();
 
     // restore log levels
     if (settings.verbose)
@@ -54,11 +121,23 @@ void app_main()
     }
 
     // rgb led
+        // rgb led
     if (settings.use_led)
     {
         init_led_output();
+
+        // pre-check: flash all LEDs white briefly to confirm they all work
+        ESP_LOGI(PGPEMU_TAG, "LED self-test: flashing all LEDs");
+
+        for (int i = 0; i < MAX_DEVICE_LEDS; i++)
+        {
+            show_rgb_event(i, true, true, true, 500);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(600));
+
         // show red
-        show_rgb_event(true, false, false, 0);
+        show_rgb_event(0, true, false, false, 0);
     }
     else
     {
@@ -117,7 +196,7 @@ void app_main()
     settings_ready();
 
     // show green for 1 s
-    show_rgb_event(false, true, false, 1000);
+    show_rgb_event(0, false, true, false, 1000);
     // show blue until someone connects
-    show_rgb_event(false, false, true, 0);
+    show_rgb_event(0, false, false, true, 0);
 }

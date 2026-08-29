@@ -3,13 +3,13 @@
 
 #include <stdbool.h>
 
-// init nvs partition
+// Initialize NVS partition
 void init_config_storage();
 
-// read settings from nvs
+// Read settings from NVS
 void read_stored_settings(bool use_mutex);
 
-// write current settings to nvs
+// Write current settings to NVS
 bool write_config_storage();
 
 #endif /* CONFIG_STORAGE_H */

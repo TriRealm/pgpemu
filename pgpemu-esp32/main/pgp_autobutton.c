@@ -6,6 +6,8 @@
 #include "esp_log.h"
 #include "esp_bt.h"
 #include "esp_gatts_api.h"
+#include "esp_random.h"
+
 
 #include "pgp_autobutton.h"
 

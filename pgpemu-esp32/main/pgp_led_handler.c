@@ -6,15 +6,32 @@
 #include "esp_log.h"
 #include "esp_system.h"
 
+#include "esp_random.h"
+
 #include "led_output.h"
 #include "log_tags.h"
 #include "pgp_autobutton.h"
 #include "settings.h"
+#include "pgp_handshake_multi.h"
 
 static const int led_duration_ms = 200;
 
 void handle_led_notify_from_app(esp_gatt_if_t gatts_if, uint16_t conn_id, const uint8_t *buffer)
 {
+
+    int device_slot = get_connection_slot(conn_id);
+
+if (device_slot < 0 ||
+    device_slot >= CONFIG_BT_ACL_CONNECTIONS)
+{
+    ESP_LOGE(
+        LEDHANDLER_TAG,
+        "Unknown connection slot for conn_id=%d",
+        conn_id
+    );
+
+    return;
+}
     int number_of_patterns = buffer[3] & 0x1f;
     int priority = (buffer[3] >> 5) & 0x7;
 
@@ -113,40 +130,47 @@ void handle_led_notify_from_app(esp_gatt_if_t gatts_if, uint16_t conn_id, const 
     {
         // only white
         ESP_LOGW(LEDHANDLER_TAG, "Can't spin Pokestop. Bag is full.");
-        show_rgb_event(true, false, false, 3 * led_duration_ms);
+        show_rgb_event(device_slot, true, false, false, 3 * led_duration_ms);
     }
     else if (count_red && count_off && count_red == count_notoff)
     {
         // blinking just red
         ESP_LOGW(LEDHANDLER_TAG, "Pokeballs are empty or Pokestop went out of range.");
-        show_rgb_event(true, false, false, 1 * led_duration_ms);
+        show_rgb_event(device_slot, true, false, false, 1 * led_duration_ms);
     }
     else if (count_red && !count_off && count_red == count_notoff)
     {
         // only red
         ESP_LOGW(LEDHANDLER_TAG, "Can't catch Pokemon. Box is full.");
-        show_rgb_event(true, false, false, 3 * led_duration_ms);
+        show_rgb_event(device_slot, true, false, false, 3 * led_duration_ms);
     }
     else if (count_green && count_green == count_notoff)
     {
         // blinking green
         ESP_LOGI(LEDHANDLER_TAG, "Pokemon in range!");
-        if (get_setting(&settings.autocatch))
+        if (get_setting(&settings.autocatch[device_slot]))
         {
             press_button = true;
         }
     }
     else if (count_yellow && count_yellow == count_notoff)
+{
+    // blinking yellow
+    ESP_LOGI(
+        LEDHANDLER_TAG,
+        "New Pokemon in range!"
+    );
+
+    if (get_setting(&settings.autocatch[device_slot]))
     {
-        // blinking yellow
-        ESP_LOGI(LEDHANDLER_TAG, "New Pokemon in range!");
         press_button = true;
     }
+}
     else if (count_blue && count_blue == count_notoff)
     {
         // blinking blue
         ESP_LOGI(LEDHANDLER_TAG, "Pokestop in range!");
-        if (get_setting(&settings.autospin))
+        if (get_setting(&settings.autospin[device_slot]))
         {
             press_button = true;
         }
@@ -156,14 +180,14 @@ void handle_led_notify_from_app(esp_gatt_if_t gatts_if, uint16_t conn_id, const 
         if (count_blue && count_green)
         {
             if (show_interactions) {
-                show_rgb_event(false, true, false, led_duration_ms); // green
+                show_rgb_event(device_slot, false, true, false, led_duration_ms); // green
             }
             ESP_LOGI(LEDHANDLER_TAG, "Caught Pokemon after %d ball shakes.", count_ballshake);
         }
         else if (count_red)
         {
             if (show_interactions) {
-                show_rgb_event(true, false, true, led_duration_ms); // pink
+                show_rgb_event(device_slot, true, false, true, led_duration_ms); // pink
             }
             ESP_LOGI(LEDHANDLER_TAG, "Pokemon fled after %d ball shakes.", count_ballshake);
         }
@@ -175,23 +199,38 @@ void handle_led_notify_from_app(esp_gatt_if_t gatts_if, uint16_t conn_id, const 
     else if (count_red && count_green && count_blue && !count_off)
     {
         if (show_interactions) {
-            show_rgb_event(false, false, true, led_duration_ms); // blue
+            show_rgb_event(device_slot, false, false, true, led_duration_ms); // blue
         }
         // blinking grb-grb...
         ESP_LOGI(LEDHANDLER_TAG, "Got items from Pokestop.");
     }
     else
+{
+    bool autocatch =
+        get_setting(&settings.autocatch[device_slot]);
+
+    bool autospin =
+        get_setting(&settings.autospin[device_slot]);
+
+    if (autospin || autocatch)
     {
-        if (get_setting(&settings.autospin) || get_setting(&settings.autocatch))
-        {
-            ESP_LOGE(LEDHANDLER_TAG, "Unhandled Color pattern, pushing button in any case");
-            press_button = true;
-        }
-        else
-        {
-            ESP_LOGE(LEDHANDLER_TAG, "Unhandled Color pattern");
-        }
+        ESP_LOGE(
+            LEDHANDLER_TAG,
+            "Unhandled Color pattern for Device %d, pushing button in any case",
+            device_slot + 1
+        );
+
+        press_button = true;
     }
+    else
+    {
+        ESP_LOGE(
+            LEDHANDLER_TAG,
+            "Unhandled Color pattern for Device %d",
+            device_slot + 1
+        );
+    }
+}
 
     if (press_button)
     {

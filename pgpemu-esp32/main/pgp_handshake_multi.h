@@ -33,6 +33,8 @@ typedef struct
 
 void init_handshake_multi();
 
+int get_connection_slot(uint16_t conn_id);
+
 int get_active_connections();
 
 // returns NULL when conn_id unknown

@@ -5,6 +5,7 @@
 import base64
 import binascii
 import sys
+import time
 from typing import Union
 
 import serial
@@ -118,7 +119,16 @@ def main():
         print("no secrets present")
         return
 
-    with serial.Serial(port=port, baudrate=115200, timeout=2) as ser:
+    ser = serial.Serial()
+    ser.port = port
+    ser.baudrate = 115200
+    ser.timeout = 2
+    ser.dtr = False
+    ser.rts = False
+    ser.open()
+
+    with ser:
+        time.sleep(0.5)
         print("enter secrets mode")
         ser.write(b"X")
         while True:

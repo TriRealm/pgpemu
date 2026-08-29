@@ -95,6 +95,19 @@ int get_cert_state(uint16_t conn_id)
     return entry->cert_state;
 }
 
+int get_connection_slot(uint16_t conn_id)
+{
+    for (int i = 0; i < MAX_CONNECTIONS; i++)
+    {
+        if (conn_id_map[i] == conn_id)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void connection_start(uint16_t conn_id)
 {
     active_connections++;
@@ -105,11 +118,10 @@ void connection_start(uint16_t conn_id)
         ESP_LOGE(HANDSHAKE_TAG, "connection_start: conn_id %d unknown", conn_id);
         return;
     }
-    if (active_connections == 1)
-    {
-        // turn leds off
-        show_rgb_event(false, false, false, 0);
-    }
+
+    // turn off the advertising indicator LED
+    clear_all_leds();
+
 
     entry->conn_id = conn_id;
     entry->connection_start = xTaskGetTickCount();
@@ -135,14 +147,14 @@ void connection_stop(uint16_t conn_id)
     active_connections--;
     if (active_connections < 0)
     {
-        // I'm not entirely sure that we covered all paths so try to save something in case of mistakes
+        
         ESP_LOGE(HANDSHAKE_TAG, "we counted connections wrong!");
         active_connections = 0;
     }
     if (active_connections == 0)
     {
-        // show blue as long as nobody is connected
-        show_rgb_event(false, false, true, 0);
+        
+        clear_all_leds();
     }
 
     client_state_t *entry = get_client_state_entry(conn_id);
@@ -158,7 +170,7 @@ void connection_stop(uint16_t conn_id)
     ESP_LOGI(HANDSHAKE_TAG, "conn_id=%d was connected for %d ms", conn_id,
              pdTICKS_TO_MS(entry->connection_end - entry->connection_start));
 
-    // TODO: we scrub the client state here. this means we won't know if he has the reconnection key when he connects again
+    
     delete_client_state_entry(entry);
 }
 
