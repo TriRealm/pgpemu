@@ -1,5 +1,7 @@
 # Pokemon Go Plus Emulator for ESP32
 
+[![Web PGPEmu Flasher](https://img.shields.io/badge/Version-1.0.6-blue)](https://trirealm.github.io/pgpemu)
+
 Autocatcher for Pokemon Go.
 
 **Note:** This repository doesn't contain the secret blobs needed to make a working emulator for a PGP!
