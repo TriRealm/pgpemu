@@ -544,12 +544,12 @@ async function saveSettings()
             document.getElementById('led_interactions').checked
                 ? 1 : 0,
 
-        wifi_password: 
-            document.getElementById('wifi_password').value,
-
         verbose:
             document.getElementById('verbose').checked
-                ? 1 : 0
+                ? 1 : 0,
+
+        wifi_password: 
+            document.getElementById('wifi_password').value
     };
 
     try
