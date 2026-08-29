@@ -27,7 +27,7 @@ static const char *TAG = "WIFI_CONFIG";
  */
 
 #define WIFI_CONFIG_SSID       "PGP-EMU"
-#define WIFI_CONFIG_PASSWORD   "MagicalPonyFucks"
+#define WIFI_CONFIG_PASSWORD   "PGPHollow"
 #define WIFI_CONFIG_CHANNEL    1
 #define WIFI_CONFIG_MAX_CONN   1
 
