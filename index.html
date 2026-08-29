@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PGP Emulator - Web Flasher</title>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #111;
+    color: #eee;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    max-width: 560px;
+    margin: 40px auto;
+  }
+  h1 { font-size: 28px; margin-bottom: 5px; }
+  .subtitle { color: #888; margin-bottom: 30px; }
+  .card {
+    background: #1d1d1d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 { margin-top: 0; font-size: 18px; }
+  ol { padding-left: 20px; line-height: 1.7; }
+  .browser-note {
+    background: #2a2200;
+    border: 1px solid #665500;
+    color: #ffd966;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  a { color: #6fb1ff; }
+  esp-web-install-button {
+    display: block;
+    margin-top: 10px;
+  }
+  .nav {
+    margin-top: 30px;
+    text-align: center;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 0;
+    border-radius: 8px;
+    background: #2ecc71;
+    color: #111;
+    cursor: pointer;
+  }
+  button:disabled { background: #555; color: #999; cursor: not-allowed; }
+  button.secondary { background: #333; color: #fff; }
+  .hint { font-size: 12px; color: #888; margin-top: 8px; }
+  #consoleLog {
+    background: #000;
+    color: #0f0;
+    font-family: monospace;
+    font-size: 13px;
+    padding: 12px;
+    border-radius: 8px;
+    min-height: 140px;
+    max-height: 320px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    margin-top: 10px;
+  }
+  .console-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .console-input-row input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #111;
+    color: #fff;
+    font-family: monospace;
+    font-size: 16px;
+  }
+  .console-input-row button {
+    width: auto;
+    padding: 10px 20px;
+  }
+  details {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #aaa;
+  }
+  details summary {
+    cursor: pointer;
+    color: #6fb1ff;
+  }
+  details table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+  }
+  details td {
+    padding: 4px 8px;
+    border-bottom: 1px solid #2a2a2a;
+    font-family: monospace;
+  }
+  details td:first-child {
+    color: #fff;
+    width: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>PGP Emulator</h1>
+  <div class="subtitle">Flash your ESP32 directly from this page</div>
+
+  <div class="browser-note">
+    This page requires <strong>Chrome, Edge, or Opera on desktop</strong>.
+    Firefox, Safari, and mobile browsers are not supported (Web Serial isn't available there).
+  </div>
+
+  <div class="card">
+    <h2>Before you start</h2>
+    <ol>
+      <li>Plug your ESP32 into your computer via USB.</li>
+      <li>Make sure no other program (Arduino IDE, a serial monitor, etc.) has the port open.</li>
+      <li>Click the button below, then select your device's port when prompted.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Flash firmware</h2>
+    <p>This installs the latest PGP Emulator firmware. Existing settings/secrets are kept unless you choose "Erase device" during install.</p>
+
+    <esp-web-install-button manifest="manifest.json">
+      <button slot="activate">Connect &amp; Flash</button>
+      <span slot="unsupported">
+        Your browser doesn't support Web Serial. Please use Chrome, Edge, or Opera on desktop.
+      </span>
+      <span slot="not-allowed">
+        Web Serial is not available. Make sure you're using this page over HTTPS.
+      </span>
+    </esp-web-install-button>
+  </div>
+
+  <div class="card">
+    <h2>Device Console</h2>
+    <p>Connect to a device that's already flashed and running to view its log output and send single-character settings commands - the same commands available over a wired UART connection.</p>
+
+    <button id="consoleConnectBtn">Connect to Device</button>
+    <div class="hint" id="consoleStatus">Not connected</div>
+
+    <div id="consoleLog">Waiting to connect...</div>
+
+    <div class="console-input-row">
+      <input id="consoleInput" type="text" maxlength="1" placeholder="Type a command character, e.g. s" disabled>
+      <button class="secondary" id="consoleSendBtn" disabled>Send</button>
+    </div>
+
+    <details>
+      <summary>Available commands</summary>
+      <table>
+        <tr><td>s</td><td>Toggle autospin (all devices)</td></tr>
+        <tr><td>c</td><td>Toggle autocatch (all devices)</td></tr>
+        <tr><td>p</td><td>Toggle powerbank ping</td></tr>
+        <tr><td>i</td><td>Toggle showing autospin/catch on LED</td></tr>
+        <tr><td>l</td><td>Toggle verbose logging</td></tr>
+        <tr><td>B</td><td>Toggle input button available</td></tr>
+        <tr><td>O</td><td>Toggle output LED available</td></tr>
+        <tr><td>A</td><td>Start BT advertising</td></tr>
+        <tr><td>a</td><td>Stop BT advertising</td></tr>
+        <tr><td>S</td><td>Save settings permanently</td></tr>
+        <tr><td>r</td><td>Show runtime counter</td></tr>
+        <tr><td>t</td><td>Show BT connection times</td></tr>
+        <tr><td>C</td><td>Show BT client states</td></tr>
+        <tr><td>T</td><td>Show FreeRTOS task list</td></tr>
+        <tr><td>R</td><td>Restart device</td></tr>
+        <tr><td>h / ?</td><td>Help</td></tr>
+      </table>
+      <p style="margin-top:10px;">
+        Note: <code>X</code> (secrets mode) and <code>m</code> (set target connections) need
+        multiple keystrokes in sequence and aren't supported from this simple console -
+        use the <a href="secrets.html">secrets uploader page</a> for uploading secrets instead.
+      </p>
+    </details>
+  </div>
+
+  <div class="nav">
+    <a href="secrets.html">Upload your PGP secrets &rarr;</a>
+  </div>
+
+</div>
+
+<script>
+
+
+// STATE
+
+
+let consolePort = null;
+let consoleReader = null;
+let consoleReadLoopPromise = null;
+let consoleLineBuffer = "";
+
+
+// LOGGING
+
+
+function consoleLog(msg) {
+    const el = document.getElementById('consoleLog');
+    el.textContent += msg + "\n";
+    el.scrollTop = el.scrollHeight;
+}
+
+
+// CONNECTION
+
+
+async function consoleConnect() {
+    if (!('serial' in navigator)) {
+        consoleLog("ERROR: Web Serial not supported. Use Chrome, Edge, or Opera on desktop.");
+        return;
+    }
+
+    try {
+        consolePort = await navigator.serial.requestPort();
+        await consolePort.open({ baudRate: 115200 });
+
+        // Avoid asserting DTR/RTS so we don't accidentally
+        // trigger bootloader/reset behavior on boards that
+        // wire those lines to EN/GPIO0.
+        try {
+            await consolePort.setSignals({ dataTerminalReady: false, requestToSend: false });
+        } catch (e) {
+            // Not all platforms support setSignals; harmless if it fails.
+        }
+
+        startConsoleReadLoop();
+
+        document.getElementById('consoleStatus').textContent = 'Connected';
+        document.getElementById('consoleConnectBtn').textContent = 'Disconnect';
+        document.getElementById('consoleInput').disabled = false;
+        document.getElementById('consoleSendBtn').disabled = false;
+
+        consoleLog("Connected to device. Type a command character and press Send.");
+    } catch (e) {
+        consoleLog("Connection failed: " + e.message);
+    }
+}
+
+async function consoleDisconnect() {
+    try {
+        if (consoleReader) {
+            await consoleReader.cancel();
+        }
+        if (consoleReadLoopPromise) {
+            await consoleReadLoopPromise;
+        }
+        if (consolePort) {
+            await consolePort.close();
+        }
+    } catch (e) {
+        // ignore
+    }
+
+    consolePort = null;
+    consoleReader = null;
+
+    document.getElementById('consoleStatus').textContent = 'Not connected';
+    document.getElementById('consoleConnectBtn').textContent = 'Connect to Device';
+    document.getElementById('consoleInput').disabled = true;
+    document.getElementById('consoleSendBtn').disabled = true;
+
+    consoleLog("Disconnected.");
+}
+
+document.getElementById('consoleConnectBtn').addEventListener('click', () => {
+    if (consolePort) {
+        consoleDisconnect();
+    } else {
+        consoleConnect();
+    }
+});
+
+
+// READ LOOP (streams every line of device output into the log)
+
+
+function startConsoleReadLoop() {
+    const textDecoder = new TextDecoderStream();
+    consolePort.readable.pipeTo(textDecoder.writable);
+    consoleReader = textDecoder.readable.getReader();
+
+    consoleReadLoopPromise = (async () => {
+        try {
+            while (true) {
+                const { value, done } = await consoleReader.read();
+                if (done) break;
+                if (value) {
+                    consoleLineBuffer += value;
+                    let idx;
+                    while ((idx = consoleLineBuffer.indexOf('\n')) >= 0) {
+                        const line = consoleLineBuffer.slice(0, idx).replace(/\r$/, '');
+                        consoleLineBuffer = consoleLineBuffer.slice(idx + 1);
+                        consoleLog(line);
+                    }
+                }
+            }
+        } catch (e) {
+            // reader cancelled/closed, expected on disconnect
+        }
+    })();
+}
+
+
+// SENDING COMMANDS
+
+
+async function consoleSend() {
+    const input = document.getElementById('consoleInput');
+    const cmd = input.value;
+    if (!cmd || !consolePort) return;
+
+    const encoder = new TextEncoder();
+    const w = consolePort.writable.getWriter();
+    try {
+        await w.write(encoder.encode(cmd));
+        consoleLog("> " + cmd);
+    } catch (e) {
+        consoleLog("ERROR sending command: " + e.message);
+    } finally {
+        w.releaseLock();
+    }
+
+    input.value = '';
+    input.focus();
+}
+
+document.getElementById('consoleSendBtn').addEventListener('click', consoleSend);
+document.getElementById('consoleInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        consoleSend();
+    }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "PGP Emulator",
+  "version": "1.0.0",
+  "home_assistant_domain": "esphome",
+  "funding_url": "",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "firmware/bootloader.bin", "offset": 4096 },
+        { "path": "firmware/partition-table.bin", "offset": 32768 },
+        { "path": "firmware/pgpemu.bin", "offset": 65536 }
+      ]
+    }
+  ]
+}
