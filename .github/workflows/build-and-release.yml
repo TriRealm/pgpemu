@@ -1,11 +1,14 @@
 name: Build and Publish Firmware
 
+permissions:
+  contents: write
+
 # Triggers: push a tag like "v1.0.0" to build and publish a new release
 on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch: {}  
+  workflow_dispatch: {} 
 
 jobs:
   build:
