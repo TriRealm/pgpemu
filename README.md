@@ -388,7 +388,8 @@ OK!
 
 ## Credits
 
-- <https://github.com/yohanes/pgpemu> - Original PGPEMU implementation
+- <https://github.com/yohanes/pgpemu> - Original PGPEMU implementation (Original Build)
+- <https://github.com/spezifisch/pgpemu> - Last Version/Implementation Before this Build
 
 ## References
 
