@@ -7,7 +7,9 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
+#define WIFI_SSID_MAX_LEN 33
 #define WIFI_PASSWORD_MAX_LEN 64
+
 
 #define MAX_PGP_DEVICES 4
 
@@ -41,8 +43,12 @@ typedef struct
     // LED brightness (0-255)
     uint8_t led_brightness;
 
+    // Wi-Fi configuration AP SSID
+    char wifi_ssid[WIFI_SSID_MAX_LEN];
+
     // Wi-Fi configuration AP password
     char wifi_password[WIFI_PASSWORD_MAX_LEN];
+    
 
     // Verbose log messages
     bool verbose;
@@ -75,6 +81,9 @@ bool set_led_brightness(uint8_t brightness);
 
 bool get_wifi_password(char *out, size_t out_size);
 bool set_wifi_password(const char *new_password);
+
+bool set_wifi_ssid(const char *new_ssid);
+bool get_wifi_ssid(char *out, size_t out_size);
 
 bool set_device_autospin(
     uint8_t device,

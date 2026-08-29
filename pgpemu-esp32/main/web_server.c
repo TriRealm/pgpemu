@@ -330,6 +330,13 @@ input[type="checkbox"] {
     <input type="checkbox" id="led_interactions">
 </label>
 
+<br>
+
+<label>
+    Wi-Fi Network Name (SSID, 1-32 characters)
+    <input type="text" id="wifi_ssid" maxlength="32" placeholder="PGP-EMU">
+</label>
+<div class="hint" style="font-size:12px;color:#888;margin-top:4px;">The network name broadcast for setup mode. Takes effect the next time Wi-Fi configuration mode starts.</div>
 
 <br>
 
@@ -338,6 +345,8 @@ input[type="checkbox"] {
     <input type="text" id="wifi_password" maxlength="63" placeholder="PGPHollow">
 </label>
 <div class="hint" style="font-size:12px;color:#888;margin-top:4px;">Used for the PGP-EMU setup network. Takes effect the next time Wi-Fi configuration mode starts.</div>
+
+<br>
 
 <label>
     Verbose Logging
@@ -446,6 +455,9 @@ async function loadSettings()
         document.getElementById('led_interactions').checked =
             data.led_interactions;
 
+        document.getElementById('wifi_ssid').value = 
+            data.wifi_ssid;
+
         document.getElementById('wifi_password').value = 
             data.wifi_password;
 
@@ -547,6 +559,9 @@ async function saveSettings()
         verbose:
             document.getElementById('verbose').checked
                 ? 1 : 0,
+
+        wifi_ssid:
+            document.getElementById('wifi_ssid').value,
 
         wifi_password: 
             document.getElementById('wifi_password').value
@@ -713,6 +728,8 @@ static esp_err_t get_settings_handler(
     httpd_req_t *req)
 {
     char response[1024];
+    char wifi_ssid_buf[WIFI_SSID_MAX_LEN];
+    get_wifi_ssid(wifi_ssid_buf, sizeof(wifi_ssid_buf));
     char wifi_password_buf[WIFI_PASSWORD_MAX_LEN];
     get_wifi_password(wifi_password_buf, sizeof(wifi_password_buf));
 
@@ -736,6 +753,8 @@ static esp_err_t get_settings_handler(
         "\"led_brightness\":%d,"
 
         "\"led_interactions\":%s,"
+
+        "\"wifi_ssid\":\"%s\","
 
         "\"wifi_password\":\"%s\","
 
@@ -800,6 +819,8 @@ static esp_err_t get_settings_handler(
 
         get_setting(&settings.led_interactions)
             ? "true" : "false",
+
+        wifi_ssid_buf,
 
         wifi_password_buf,
 
@@ -913,6 +934,9 @@ static esp_err_t settings_handler(
     int led_interactions = 0;
     int verbose = 0;
 
+    char wifi_ssid[WIFI_SSID_MAX_LEN] = {0};
+    bool has_wifi_ssid = json_get_string(body, "wifi_ssid", wifi_ssid, sizeof(wifi_ssid));
+
     char wifi_password[WIFI_PASSWORD_MAX_LEN] = {0};
     bool has_wifi_password = json_get_string(body, "wifi_password", wifi_password, sizeof(wifi_password));
 
@@ -1008,6 +1032,17 @@ static esp_err_t settings_handler(
             req,
             HTTPD_400_BAD_REQUEST,
             "Invalid brightness value"
+        );
+
+        return ESP_FAIL;
+    }
+
+    if (has_wifi_ssid && strlen(wifi_ssid) == 0)
+    {
+        httpd_resp_send_err(
+            req,
+            HTTPD_400_BAD_REQUEST,
+            "Wi-Fi SSID cannot be empty"
         );
 
         return ESP_FAIL;
@@ -1113,6 +1148,11 @@ static esp_err_t settings_handler(
     );
 
     set_led_brightness((uint8_t)led_brightness);
+
+    if (has_wifi_ssid && strlen(wifi_ssid) > 0)
+    {
+        set_wifi_ssid(wifi_ssid);
+    }
 
     if (has_wifi_password && strlen(wifi_password) > 0)
     {

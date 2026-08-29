@@ -33,8 +33,9 @@ Settings settings = {
     .use_led = true,
 
     .led_interactions = true,
-    .led_brightness = 25,   // default ~10%
+    .led_brightness = 10,   // default ~5%
 
+    .wifi_ssid = "PGP-EMU",
     .wifi_password = "PGPHollow",
     .verbose = true,
 };
@@ -226,6 +227,52 @@ bool set_led_brightness(uint8_t brightness)
         &settings.led_brightness,
         brightness
     );
+}
+
+bool get_wifi_ssid(char *out, size_t out_size)
+{
+    if (!out || out_size == 0)
+    {
+        return false;
+    }
+
+    if (!xSemaphoreTake(settings.mutex, portMAX_DELAY))
+    {
+        return false;
+    }
+
+    strlcpy(out, settings.wifi_ssid, out_size);
+
+    xSemaphoreGive(settings.mutex);
+
+    return true;
+}
+
+bool set_wifi_ssid(const char *new_ssid)
+{
+    if (!new_ssid)
+    {
+        return false;
+    }
+
+    size_t len = strlen(new_ssid);
+
+    // Wi-Fi SSIDs must be 1-32 characters
+    if (len < 1 || len >= WIFI_SSID_MAX_LEN)
+    {
+        return false;
+    }
+
+    if (!xSemaphoreTake(settings.mutex, portMAX_DELAY))
+    {
+        return false;
+    }
+
+    strlcpy(settings.wifi_ssid, new_ssid, WIFI_SSID_MAX_LEN);
+
+    xSemaphoreGive(settings.mutex);
+
+    return true;
 }
 
 bool get_wifi_password(char *out, size_t out_size)

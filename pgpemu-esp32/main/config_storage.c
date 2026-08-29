@@ -32,6 +32,7 @@ static const char KEY_USE_BUTTON[] = "usebut";
 static const char KEY_USE_LED[] = "useled";
 static const char KEY_LED_BRIGHTNESS[] = "ledbright";
 static const char KEY_SHOW_LED_INTERACTIONS[] = "ledinter";
+static const char KEY_WIFI_SSID[] = "wifissid";
 static const char KEY_WIFI_PASSWORD[] = "wifipass";
 static const char KEY_VERBOSE[] = "verbose";
 
@@ -365,6 +366,26 @@ void read_stored_settings(bool use_mutex)
             (bool)verbose;
     }
 
+    // Wi-Fi SSID
+    char stored_wifi_ssid[WIFI_SSID_MAX_LEN] = {0};
+    size_t wifi_ssid_len = sizeof(stored_wifi_ssid);
+
+    err = nvs_get_str(
+        user_settings_handle,
+        KEY_WIFI_SSID,
+        stored_wifi_ssid,
+        &wifi_ssid_len
+    );
+
+    if (err == ESP_OK)
+    {
+        strlcpy(settings.wifi_ssid, stored_wifi_ssid, sizeof(settings.wifi_ssid));
+    }
+    else if (err != ESP_ERR_NVS_NOT_FOUND)
+    {
+        nvs_read_check(CONFIG_STORAGE_TAG, err, KEY_WIFI_SSID);
+    }
+
     // Wi-Fi Password
     char stored_wifi_password[WIFI_PASSWORD_MAX_LEN] = {0};
     size_t wifi_password_len = sizeof(stored_wifi_password);
@@ -654,6 +675,19 @@ bool write_config_storage()
             err,
             KEY_LED_BRIGHTNESS
         );
+
+        // Wi-Fi SSID
+        err = nvs_set_str(
+        user_settings_handle,
+        KEY_WIFI_SSID,
+        settings.wifi_ssid
+    );
+
+    all_ok =
+        all_ok &&
+        nvs_write_check(CONFIG_STORAGE_TAG, err, KEY_WIFI_SSID);
+
+        // Wi-Fi Password
 
         err = nvs_set_str(
         user_settings_handle,
