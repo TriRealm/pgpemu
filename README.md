@@ -1,6 +1,6 @@
 # Pokemon Go Plus Emulator for ESP32
 
-[![Web PGPEmu Flasher](https://img.shields.io/badge/Version-1.0.6-blue)](https://trirealm.github.io/pgpemu)
+[![Web PGPEmu Flasher](https://img.shields.io/badge/Web%20PGPEmu%20Flasher-v1.0.6-blue)](https://trirealm.github.io/pgpemu)
 
 Autocatcher for Pokemon Go.
 
