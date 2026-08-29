@@ -41,31 +41,12 @@ Maybe for Future revisions?
 
 [FCC No. of ESP32 Devboard](https://fccid.io/2A54N-ESP32)
 
----
-**ORIGINAL GIT**:
-
-[LINK FOR MY OWN REFERENCE (TriRealm) - THIS IS THE BLOG POST I DISCOVERED THIS PROJECT FROM](https://spezifisch.codeberg.page/posts/2023-04-03/pokemon-go-plus-autocatcher-diy/)
-
-This fork adds some features:
-
-- connect up to 4 different devices simultaneously
-- parse LED patterns to detect Pokemon/Pokestops/bag full/box full/Pokeballs empty/etc. and press button only when needed
-- randomized delay for pressing the button and press duration
-- PGP secrets are stored in [ESP32 NVS](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html) instead of being compiled in
-- settings menu using serial port
-- secrets upload using serial port (see [Upload Secrets](#upload-secrets))
-- setting: autocatch/autospin on/off
-- setting: periodically turn on WiFi to waste some power so your powerbank doesn't turn off (depends on your powerbank if this works)
-- setting: chose between PGP secrets if you have dumps from multiple PGPs
-- setting: chose target number of client connections (Bluetooth advertising starts again automatically until all clients are connected)
-- store user settings in NVS
-- why not use it together with [a fashionable case](https://github.com/spezifisch/pgpemu-case)? :)
 
 ## Hardware
 
 Tested with:
 
-- ESP32-WROOM-32 (AZDelivery)
+- [ESP32-WROOM-32](https://www.aliexpress.com/item/1005007420438436.html?spm=a2g0o.order_list.order_list_main.10.178c1802Ni3Nyy)
 
 ## Usage
 
