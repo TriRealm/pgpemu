@@ -29,11 +29,11 @@ Settings settings = {
 
     .powerbank_ping = false,
 
-    .use_button = false,
-    .use_led = false,
+    .use_button = true,
+    .use_led = true,
 
     .led_interactions = true,
-    .led_brightness = 128,   // default ~50%
+    .led_brightness = 25,   // default ~10%
 
     .wifi_password = "PGPHollow",
     .verbose = true,
