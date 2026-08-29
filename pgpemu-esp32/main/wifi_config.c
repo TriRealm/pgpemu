@@ -27,7 +27,7 @@ static const char *TAG = "WIFI_CONFIG";
  */
 
 #define WIFI_CONFIG_SSID       "PGP-EMU"
-#define WIFI_CONFIG_PASSWORD   "PGPHollow"
+#define WIFI_CONFIG_DEFAULT_PASSWORD   "PGPHollow"
 #define WIFI_CONFIG_CHANNEL    1
 #define WIFI_CONFIG_MAX_CONN   1
 
@@ -671,12 +671,20 @@ bool wifi_config_start(void)
         }
     }
 
+    char wifi_password[WIFI_PASSWORD_MAX_LEN];
+
+    if (!get_wifi_password(wifi_password, sizeof(wifi_password)) ||
+        strlen(wifi_password) < 8)
+    {
+        ESP_LOGW(TAG, "invalid stored Wi-Fi password, using default");
+        strlcpy(wifi_password, WIFI_CONFIG_DEFAULT_PASSWORD, sizeof(wifi_password));
+    }
+
     wifi_config_t ap_config = {
         .ap = {
             .ssid = WIFI_CONFIG_SSID,
             .ssid_len = strlen(WIFI_CONFIG_SSID),
             .channel = WIFI_CONFIG_CHANNEL,
-            .password = WIFI_CONFIG_PASSWORD,
             .max_connection = WIFI_CONFIG_MAX_CONN,
             .authmode = WIFI_AUTH_WPA2_PSK,
             .pmf_cfg = {
@@ -684,6 +692,8 @@ bool wifi_config_start(void)
             },
         },
     };
+
+    strlcpy((char *)ap_config.ap.password, wifi_password, sizeof(ap_config.ap.password));
 
     err = esp_wifi_set_mode(WIFI_MODE_AP);
 
@@ -763,7 +773,7 @@ bool wifi_config_start(void)
     ESP_LOGI(TAG, "====================================");
     ESP_LOGI(TAG, "Wi-Fi configuration mode ACTIVE");
     ESP_LOGI(TAG, "SSID: %s", WIFI_CONFIG_SSID);
-    ESP_LOGI(TAG, "Password: %s", WIFI_CONFIG_PASSWORD);
+    ESP_LOGI(TAG, "Password: %s", wifi_password);
     ESP_LOGI(TAG, "Open: http://%s", WIFI_CONFIG_IP);
     ESP_LOGI(TAG, "====================================");
 

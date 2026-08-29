@@ -1,5 +1,7 @@
 #include "config_storage.h"
 
+#include <string.h>
+
 #include "config_secrets.h"
 #include "log_tags.h"
 #include "nvs_helper.h"
@@ -30,6 +32,7 @@ static const char KEY_USE_BUTTON[] = "usebut";
 static const char KEY_USE_LED[] = "useled";
 static const char KEY_LED_BRIGHTNESS[] = "ledbright";
 static const char KEY_SHOW_LED_INTERACTIONS[] = "ledinter";
+static const char KEY_WIFI_PASSWORD[] = "wifipass";
 static const char KEY_VERBOSE[] = "verbose";
 
 #define MAX_PGP_DEVICES 4
@@ -362,6 +365,25 @@ void read_stored_settings(bool use_mutex)
             (bool)verbose;
     }
 
+    // Wi-Fi Password
+    char stored_wifi_password[WIFI_PASSWORD_MAX_LEN] = {0};
+    size_t wifi_password_len = sizeof(stored_wifi_password);
+
+    err = nvs_get_str(
+        user_settings_handle,
+        KEY_WIFI_PASSWORD,
+        stored_wifi_password,
+        &wifi_password_len
+    );
+
+    if (err == ESP_OK)
+    {
+        strlcpy(settings.wifi_password, stored_wifi_password, sizeof(settings.wifi_password));
+    }
+    else if (err != ESP_ERR_NVS_NOT_FOUND)
+    {
+        nvs_read_check(CONFIG_STORAGE_TAG, err, KEY_WIFI_PASSWORD);
+    }
     
     // Chosen device
     
@@ -632,6 +654,16 @@ bool write_config_storage()
             err,
             KEY_LED_BRIGHTNESS
         );
+
+        err = nvs_set_str(
+        user_settings_handle,
+        KEY_WIFI_PASSWORD,
+        settings.wifi_password
+    );
+
+    all_ok =
+        all_ok &&
+        nvs_write_check(CONFIG_STORAGE_TAG, err, KEY_WIFI_PASSWORD);
 
     err = nvs_set_i8(
         user_settings_handle,

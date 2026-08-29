@@ -334,6 +334,12 @@ input[type="checkbox"] {
 <br>
 
 <label>
+    Wi-Fi Config Password (8-63 characters)
+    <input type="text" id="wifi_password" maxlength="63" placeholder="PGPHollow">
+</label>
+<div class="hint" style="font-size:12px;color:#888;margin-top:4px;">Used for the PGP-EMU setup network. Takes effect the next time Wi-Fi configuration mode starts.</div>
+
+<label>
     Verbose Logging
     <input type="checkbox" id="verbose">
 </label>
@@ -388,9 +394,9 @@ async function updateStatus()
     }
 }
 
-// ============================================================
+
 // LOAD SETTINGS
-// ============================================================
+
 
 async function loadSettings()
 {
@@ -440,6 +446,9 @@ async function loadSettings()
         document.getElementById('led_interactions').checked =
             data.led_interactions;
 
+        document.getElementById('wifi_password').value = 
+            data.wifi_password;
+
         document.getElementById('verbose').checked =
             data.verbose;
     }
@@ -449,9 +458,9 @@ async function loadSettings()
     }
 }
 
-// ============================================================
+
 // SAVE SETTINGS
-// ============================================================
+
 
 async function saveSettings()
 {
@@ -534,6 +543,9 @@ async function saveSettings()
         led_interactions:
             document.getElementById('led_interactions').checked
                 ? 1 : 0,
+
+        wifi_password: 
+            document.getElementById('wifi_password').value,
 
         verbose:
             document.getElementById('verbose').checked
@@ -692,6 +704,8 @@ static esp_err_t status_handler(
 }
 
 
+
+
 // GET /api/settings
 
 
@@ -699,6 +713,8 @@ static esp_err_t get_settings_handler(
     httpd_req_t *req)
 {
     char response[1024];
+    char wifi_password_buf[WIFI_PASSWORD_MAX_LEN];
+    get_wifi_password(wifi_password_buf, sizeof(wifi_password_buf));
 
     snprintf(
         response,
@@ -720,6 +736,8 @@ static esp_err_t get_settings_handler(
         "\"led_brightness\":%d,"
 
         "\"led_interactions\":%s,"
+
+        "\"wifi_password\":\"%s\","
 
         "\"verbose\":%s"
 
@@ -783,6 +801,8 @@ static esp_err_t get_settings_handler(
         get_setting(&settings.led_interactions)
             ? "true" : "false",
 
+        wifi_password_buf,
+
         get_setting(&settings.verbose)
             ? "true" : "false"
     );
@@ -811,6 +831,27 @@ static void deferred_wifi_config_stop_task(void *arg)
     wifi_config_stop();
 
     vTaskDelete(NULL);
+}
+
+static bool json_get_string(const char *body, const char *key, char *out, size_t out_size)
+{
+    char search[48];
+    snprintf(search, sizeof(search), "\"%s\":\"", key);
+
+    const char *start = strstr(body, search);
+    if (!start) return false;
+
+    start += strlen(search);
+    const char *end = strchr(start, '"');
+    if (!end) return false;
+
+    size_t len = (size_t)(end - start);
+    if (len >= out_size) len = out_size - 1;
+
+    memcpy(out, start, len);
+    out[len] = '\0';
+
+    return true;
 }
 
 static esp_err_t settings_handler(
@@ -871,6 +912,9 @@ static esp_err_t settings_handler(
     int led_brightness = 128;
     int led_interactions = 0;
     int verbose = 0;
+
+    char wifi_password[WIFI_PASSWORD_MAX_LEN] = {0};
+    bool has_wifi_password = json_get_string(body, "wifi_password", wifi_password, sizeof(wifi_password));
 
     
     // Parse JSON
@@ -969,6 +1013,19 @@ static esp_err_t settings_handler(
         return ESP_FAIL;
     }
 
+    if (has_wifi_password &&
+        strlen(wifi_password) > 0 &&
+        strlen(wifi_password) < 8)
+    {
+        httpd_resp_send_err(
+            req,
+            HTTPD_400_BAD_REQUEST,
+            "Wi-Fi password must be at least 8 characters"
+        );
+
+        return ESP_FAIL;
+    }
+
     
     // Apply target connection setting
     
@@ -1056,6 +1113,11 @@ static esp_err_t settings_handler(
     );
 
     set_led_brightness((uint8_t)led_brightness);
+
+    if (has_wifi_password && strlen(wifi_password) > 0)
+    {
+        set_wifi_password(wifi_password);
+    }
 
     
     // Logging

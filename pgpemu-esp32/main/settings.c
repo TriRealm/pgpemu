@@ -1,5 +1,7 @@
 #include "settings.h"
 
+#include <string.h>
+
 #include "config_secrets.h"
 
 #define MAX_PGP_DEVICES 4
@@ -32,6 +34,8 @@ Settings settings = {
 
     .led_interactions = true,
     .led_brightness = 128,   // default ~50%
+
+    .wifi_password = "PGPHollow",
     .verbose = true,
 };
 
@@ -222,6 +226,52 @@ bool set_led_brightness(uint8_t brightness)
         &settings.led_brightness,
         brightness
     );
+}
+
+bool get_wifi_password(char *out, size_t out_size)
+{
+    if (!out || out_size == 0)
+    {
+        return false;
+    }
+
+    if (!xSemaphoreTake(settings.mutex, portMAX_DELAY))
+    {
+        return false;
+    }
+
+    strlcpy(out, settings.wifi_password, out_size);
+
+    xSemaphoreGive(settings.mutex);
+
+    return true;
+}
+
+bool set_wifi_password(const char *new_password)
+{
+    if (!new_password)
+    {
+        return false;
+    }
+
+    size_t len = strlen(new_password);
+
+    // WPA2 requires 8-63 characters
+    if (len < 8 || len >= WIFI_PASSWORD_MAX_LEN)
+    {
+        return false;
+    }
+
+    if (!xSemaphoreTake(settings.mutex, portMAX_DELAY))
+    {
+        return false;
+    }
+
+    strlcpy(settings.wifi_password, new_password, WIFI_PASSWORD_MAX_LEN);
+
+    xSemaphoreGive(settings.mutex);
+
+    return true;
 }
 
 bool set_chosen_device(uint8_t id)
