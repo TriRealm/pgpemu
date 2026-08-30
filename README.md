@@ -34,9 +34,9 @@ Tested with:
 
 ## Usage
 
-### Build Firmware Options (1 or 2)
+## Build Firmware Options (1 or 2)
 
-## 1. Web Flasher
+### 1. Web Flasher
 
 Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
  - This will always/automatically pull the latest version from this Repo
@@ -51,7 +51,7 @@ Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
 
  Close out of that screen and press the "Disconnect" button! or just simply unplug your ESP32 from the PC!
  
-## 2. Manual Installation
+### 2. Manual Installation
 
   You need ESP-IDF. I'm using v6.1 (stable) installed using the VSCode extension.
   To install it use the [Get Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html).
@@ -59,9 +59,9 @@ Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
   Open the folder `pgpemu-esp32` in VSCode. Run "ESP-IDF Build, Flash and Monitor".
   
 ---
-### Upload Secrets Options (1 or 2)
+## Upload Secrets Options (1 or 2)
 
-## 1. Web Flasher for Secrets Upload
+### 1. Web Flasher for Secrets Upload
 
   Use the Web Flasher Secrets Uploader [Here](https://trirealm.github.io/pgpemu/secrets.html)
 
@@ -79,7 +79,7 @@ Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
   
   Power off/unplug the ESP and then power it back up and Congratulations! are all set and have you're very own ESP32 PGP-Emu
 
-## 2. Manual Upload
+### 2. Manual Upload
 
   Go to `./secrets`, rename `secrets.example.yaml` to `secrets.yaml` and edit it with your dumped PGP secrets.
 
@@ -107,8 +107,10 @@ Press and hold the button for 3 seconds (LED 1 will turn green when the A.P. is 
 
 Open your Wi-Fi settings on a device (PC, Laptop or Mobile etc)
 
-Default SSID/Wi-Fi Name: `PGP-EMU`
-Default Password: `PGPHollow`
+
+### Default SSID/Wi-Fi Name: `PGP-EMU`
+
+### Default Password: `PGPHollow`
 
 Once Connected Open a web-browers and in the URL Bar Put `192.168.4.1` and within here you can access the entire settings for the PGP-Emu
 
