@@ -10,67 +10,86 @@ You need to dump these secrets yourself from your own original device (see [Refe
 
 ## Features
 
-**TriRealm (22/08/2026)**
+This fork adds some features:
 
-Working on adding more functionality:
-
-- [x] Making a long button press boot up a web server to change settings on the go easily on mobile which will shut itself down once settings have been saved
-
-- [x] Also made the button Toggle discoverability depending on it's current state (searching or not) with a bright RED if Max (4 Devices is reached) - Will also turn off Advertising mode with every new connection       automatically
-
-- [x] Also re-writing the LED Handler, so I can run WS2812B's to have 1 LED per Paired Device (Capping at 4 Devices)
-
-- [x] LED Brightness Settings on Web Server (WOW They're Bright LMAO)
-
-- [x] Per-Device Settings (Auto-Spin & Auto-Catch) so all 4 devices can have their own combination of settings they desire
-
-All these changes are theoretical right now (I only have ESP32-C5 Devkits, so I'm awaiting my ESP32-WROOM to arrive in the mail to flash and confirm the changes I'm making work)
-
-All this code is implemented and the code seems sound and SHOULD work! but theoretical till have the hardware to test/trial run
-
----
-
-**TriRealm (28/08/2026)**
-
-Working Prototype On Scrap PCB's I had laying around, all features and changes function perfectly!
-
-![Very First Working Prototype with changes to code above.](https://i.postimg.cc/yx9S4gPK/image.png)
-
-Now I'm just waiting on my Custom PCB's designed to house these components without any visible wires and make it a nice clean package!
-
-Maybe for Future revisions?
-
-[MP2759 Battery Management/Charger Chip](https://www.monolithicpower.com/en/products/battery-management/chargers/mp2759.html) - Would allow for battery to be connected to the unit directly and if the battery died, could plug in and charge WITHOUT having to disconnect the battery and STILL actively use the PGPEmu Safely (Chip has `Power Path Management`)
-
-[FCC No. of ESP32 Devboard](https://fccid.io/2A54N-ESP32)
+- connect up to 4 different devices simultaneously
+- Support for 4 WS2812B LED's | to parse LED patterns to detect Pokemon/Pokestops/bag full/box full/Pokeballs empty/etc. Each Connected Device gets their own LED
+- randomized delay for pressing the button and press duration
+- PGP secrets are stored in ESP32 NVS instead of being compiled in
+- Web-Server to access settings on the go and change per-device settings (Auto-Catch & Auto-Spin) or general settings such as LED Brightness ETC
+- settings menu using serial port (can use the web flasher button above to use the Web Version)
+- secrets upload using serial port (see Upload Secrets | Can also use the web flasher above and look for the upload secrets button on that page) 
+- setting: autocatch/autospin on/off (Per Device)
+- setting: periodically turn on WiFi to waste some power so your powerbank doesn't turn off (depends on your powerbank if this works)
+- setting: chose between PGP secrets if you have dumps from multiple PGPs
+- setting: chose target number of client connections (Bluetooth advertising starts again automatically until all clients are connected)
+- store user settings in NVS
 
 
 ## Hardware
 
 Tested with:
 
-- [ESP32-WROOM-32](https://www.aliexpress.com/item/1005007420438436.html?spm=a2g0o.order_list.order_list_main.10.178c1802Ni3Nyy)
+- [ESP32-WROOM-32 CP2102 Chip](https://www.aliexpress.com/item/1005007420438436.html?spm=a2g0o.order_list.order_list_main.10.178c1802Ni3Nyy)
 
 ## Usage
 
-### Build Firmware
+### Build Firmware Options (1 or 2)
 
-You need ESP-IDF. I'm using v4.4 (stable) installed using the VSCode extension.
-To install it use the [Get Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html).
+1. **Web Flasher**
 
-Open the folder `pgpemu-esp32` in VSCode. Run "ESP-IDF Build, Flash and Monitor".
+Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
+ - This will always/automatically pull the latest version from this Repo
 
-### Upload Secrets
+ On the page on `Flash Firmware` Header
+ 
+ Click `Connect & Flash` and then Plug in your device and select your ESP, the next screen you want to press `Install PGP Emulator`
 
-Go to `./secrets`, rename `secrets.example.yaml` to `secrets.yaml` and edit it with your dumped PGP secrets.
+ For First/Corrupt Installations Check the `Erase` Box - Note this will erase all previous settings & uploaded blobs/keys etc. (Useful if you changed the Web-Servers Password and forgotten it)
+ 
+ then click `Next` and then press `install` and sit and wait until it finishes with a "🎉" emoji!
 
-You'll need Python 3.9+ and [Poetry](https://python-poetry.org/). Install dependencies:
+ Close out of that screen and press the "Disconnect" button! or just simply unplug your ESP32 from the PC!
+ 
+2. Manual Installation
+
+  You need ESP-IDF. I'm using v6.1 (stable) installed using the VSCode extension.
+  To install it use the [Get Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html).
+
+  Open the folder `pgpemu-esp32` in VSCode. Run "ESP-IDF Build, Flash and Monitor".
+  
+
+### Upload Secrets Options (1 or 2)
+
+1. Web Flasher for Secrets Upload
+
+  Use the Web Flasher Secrets Uploader [Here](https://trirealm.github.io/pgpemu/secrets.html)
+
+  Plug in your ESP32 and press the `Connect to Device` button
+
+  Select the device slot (0 - by default | I use this as I just have 1 PGP's Key and Blob)
+
+  Enter the Device name (I use `BluePGP`, `RedPGP` or `YellowPGP` etc)
+
+  Input your PGP's information (`Mac Address`, `Device Key` and `Blob` ) - Once again see [References](#references) for pointers on how to obtain these
+
+  then press `Upload Secrets` 
+
+  In the `Log` Console when you see the line `=== Upload Complete ===` you're secrets have successfully upload and are ready to use! 
+  
+  Power off/unplug the ESP and then power it back up and Congratulations! are all set and have you're very own ESP32 PGP-Emu
+
+2. Manual Upload
+
+  Go to `./secrets`, rename `secrets.example.yaml` to `secrets.yaml` and edit it with your dumped PGP secrets.
+
+  You'll need Python 3.9+ and [Poetry](https://python-poetry.org/). Install dependencies:
 
 ```shell
 poetry install --no-root
 ```
 
-Then upload your secrets to your device using:
+  Then upload your secrets to your device using:
 
 ```shell
 # Linux: (replace /dev/ttyUSB0 with your ESP's serial tty)
