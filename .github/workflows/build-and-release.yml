@@ -8,7 +8,7 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch: {} 
+  workflow_dispatch: {}
 
 jobs:
   build:
@@ -70,4 +70,27 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add firmware manifest.json
           git commit -m "Update firmware build from ${{ github.ref_name }}" || echo "No changes to commit"
+          git push
+
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-repo
+
+      - name: Update README version badge
+        run: |
+          cd main-repo
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Setting README badge version to: $VERSION"
+          sed -i -E "s#(img\.shields\.io/badge/Version-)[^-]+(-blue)#\1${VERSION}\2#" README.md
+          grep -o 'badge/Version-[^)]*' README.md
+
+      - name: Commit and push README badge update
+        run: |
+          cd main-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update version badge to ${{ github.ref_name }}" || echo "No changes to commit"
           git push
