@@ -425,7 +425,7 @@ OK!
  
  Click `Connect & Flash` and then Plug in your device and select your ESP, the next screen you want to press `Install PGP Emulator`
 
- Make sure `Erase` Box is **UN-CHECKED** - Note this will erase all previous settings & uploaded blobs/keys IF CHECKED.
+ Make sure the `Erase` Box is **UN-CHECKED** - Note this will erase all previous settings & uploaded blobs/keys IF CHECKED.
  
  then click `Next` and then press `install` and sit and wait until it finishes with a "🎉" emoji!
 
