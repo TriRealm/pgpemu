@@ -51,6 +51,8 @@ Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
 
  Close out of that screen and press the "Disconnect" button! or just simply unplug your ESP32 from the PC!
 
+ **For Updating** [Check Here](#Updating)
+
 
 
 ### 2. Manual Installation
@@ -102,6 +104,8 @@ poetry run ./secrets_upload.py secrets.yaml /dev/ttyUSB0
 
 Troubleshooting: If you get `serial.serialutil.SerialException: device reports readiness to read but returned no data (device disconnected or multiple access on port?)`
 make doubly sure that your previously opened serial terminal (e.g. ESP-IDF Monitor) is stopped.
+
+---
 
 ## Configuration
 
@@ -411,7 +415,25 @@ leaving secrets mode
 > X
 OK!
 ```
+---
 
+## Updating
+
+ Using the [Web Flasher](https://trirealm.github.io/pgpemu/)
+
+ On the page on `Flash Firmware` Header
+ 
+ Click `Connect & Flash` and then Plug in your device and select your ESP, the next screen you want to press `Install PGP Emulator`
+
+ Make sure `Erase` Box is **UN-CHECKED** - Note this will erase all previous settings & uploaded blobs/keys IF CHECKED.
+ 
+ then click `Next` and then press `install` and sit and wait until it finishes with a "🎉" emoji!
+
+ Close out of that screen and press the "Disconnect" button! or just simply unplug your ESP32 from the PC!
+
+ Congratulations! you upgraded to the latest version and kept all your configured settings & Uploaded Keys/Blobs!
+
+---
 ## Credits
 
 - <https://github.com/yohanes/pgpemu> - Original PGPEMU implementation (Original Build)
