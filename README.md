@@ -50,7 +50,9 @@ Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
  then click `Next` and then press `install` and sit and wait until it finishes with a "🎉" emoji!
 
  Close out of that screen and press the "Disconnect" button! or just simply unplug your ESP32 from the PC!
- 
+
+
+
 ### 2. Manual Installation
 
   You need ESP-IDF. I'm using v6.1 (stable) installed using the VSCode extension.
@@ -79,6 +81,8 @@ Use the Web Flasher [Here](https://trirealm.github.io/pgpemu/)
   
   Power off/unplug the ESP and then power it back up and Congratulations! are all set and have you're very own ESP32 PGP-Emu
 
+
+
 ### 2. Manual Upload
 
   Go to `./secrets`, rename `secrets.example.yaml` to `secrets.yaml` and edit it with your dumped PGP secrets.
@@ -99,9 +103,9 @@ poetry run ./secrets_upload.py secrets.yaml /dev/ttyUSB0
 Troubleshooting: If you get `serial.serialutil.SerialException: device reports readiness to read but returned no data (device disconnected or multiple access on port?)`
 make doubly sure that your previously opened serial terminal (e.g. ESP-IDF Monitor) is stopped.
 
-### Configuration
+## Configuration
 
-Web Server:
+### Web Server:
 
 Press and hold the button for 3 seconds (LED 1 will turn green when the A.P. is active)
 
@@ -120,7 +124,7 @@ Once changed and set to what you desire, press `Save Settings` and the AP will i
 
 
 ---
-Serial menu:
+### Serial menu:
 
 ```text
 I (208804) uart_events: Device: RedPGP
