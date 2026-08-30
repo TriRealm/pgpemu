@@ -1,6 +1,6 @@
 # Pokemon Go Plus Emulator for ESP32
 
-[![Online PGPEmu Flasher](https://img.shields.io/badge/Online%20Flasher%20Tool-Click%20Here-7289DA)](https://trirealm.github.io/pgpemu)
+
 [![Kofi](https://img.shields.io/badge/Kofi-Support_TriRealm-8755D6)](https://ko-fi.com/trirealm)
 
 
