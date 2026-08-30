@@ -1,6 +1,6 @@
 # Pokemon Go Plus Emulator for ESP32
 
-[![Kofi](https://img.shields.io/badge/Social%20Card-TriRealm's_Links-e2b683)](https://trirealm.carrd.co/)
+[![Social Card](https://img.shields.io/badge/Social%20Card-TriRealm's_Links-e2b683)](https://trirealm.carrd.co/)
 [![Kofi](https://img.shields.io/badge/Kofi-Support_TriRealm-8755D6)](https://ko-fi.com/trirealm)
 
 
