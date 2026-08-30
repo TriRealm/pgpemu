@@ -75,7 +75,7 @@ jobs:
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: master
           path: main-repo
 
       - name: Update README version badge
